@@ -1,8 +1,23 @@
 // import logo from "./logo.svg";
 import "./bootstrap.min.css";
 import "./App.css";
+import { useState } from "react";
 
-function App() {
+const App = () => {
+  const [ipAddress, setIpAddress] = useState([0, 0, 0, 0]);
+
+  const handleClick = (e) => {
+    e.preventDefault();
+    console.log("whatever");
+  };
+
+  const handleChange = (e, quartetIndex) => {
+    let changedIpAddress = [...ipAddress];
+    changedIpAddress[quartetIndex] = parseInt(e.currentTarget.value);
+    setIpAddress(changedIpAddress);
+    // console.log(changedIpAddress);
+  };
+
   return (
     <div className="App">
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -86,65 +101,81 @@ function App() {
         </div>
       </nav>
 
-      <div className="container">
-        <h1>Logo will go here</h1>
-        <form>
-          <div className="col-10 mx-auto">
-            <div className="row">
-
-              <div className="d-flex row">
-                <div className="col-8">
-                  <div
-                    className="form-group mx-1"
-                    style={{ display: "inline-block", width: '20%' }}
-                  >
-                    <input type="text" className="form-control" id="inputDefault" />
-                  </div>
-                  .
-                  <div
-                    className="form-group mx-1"
-                    style={{ display: "inline-block", width: '20%' }}
-                  >
-                    <input type="text" className="form-control" id="inputDefault" />
-                  </div>
-                  .
-                  <div
-                    className="form-group mx-1"
-                    style={{ display: "inline-block", width: '20%' }}
-                  >
-                    <input type="text" className="form-control" id="inputDefault" />
-                  </div>
-                  .
-                  <div
-                    className="form-group mx-1"
-                    style={{ display: "inline-block", width: '20%' }}
-                  >
-                    <input type="text" className="form-control" id="inputDefault" />
-                  </div>
+      <div className="container" style={{ minWidth: "550px" }}>
+        <h1>Subnet Calculator</h1>
+        <div className="col-12 mx-auto">
+          <div className="row">
+            <div className="d-flex row">
+              <div className="col-8">
+                <div
+                  className="form-group mx-1"
+                  style={{ display: "inline-block", width: "20%" }}
+                >
+                  <input
+                    type="text"
+                    className="form-control"
+                    onChange={(e) => handleChange(e, 0)}
+                  />
                 </div>
-
-                <div className="col-2">
-                  <div className="form-group">
-                    <select className="form-select w-100" id="exampleSelect1">
-                      <option>1</option>
-                      <option>2</option>
-                      <option>3</option>
-                      <option>4</option>
-                      <option>5</option>
-                    </select>
-                  </div>
+                <strong>.</strong>
+                <div
+                  className="form-group mx-1"
+                  style={{ display: "inline-block", width: "20%" }}
+                >
+                  <input
+                    type="text"
+                    className="form-control"
+                    onChange={(e) => handleChange(e, 1)}
+                  />
                 </div>
-
-                <div className="col-2">
-                  <button className="btn btn-primary w-100">Do</button>
+                <strong>.</strong>
+                <div
+                  className="form-group mx-1"
+                  style={{ display: "inline-block", width: "20%" }}
+                >
+                  <input
+                    type="text"
+                    className="form-control"
+                    onChange={(e) => handleChange(e, 2)}
+                  />
                 </div>
+                <strong>.</strong>
+                <div
+                  className="form-group mx-1"
+                  style={{ display: "inline-block", width: "20%" }}
+                >
+                  <input
+                    type="text"
+                    className="form-control"
+                    onChange={(e) => handleChange(e, 3)}
+                  />
+                </div>
+              </div>
+              <div className="col-2 px-0">
+                <div className="form-group">
+                  <select className="form-select w-100" id="exampleSelect1">
+                    <option>/24</option>
+                    <option>/25</option>
+                    <option>/26</option>
+                    <option>/27</option>
+                    <option>/28</option>
+                  </select>
+                </div>
+              </div>
+              <div className="col-2">
+                <button
+                  onClick={(e) => handleClick(e)}
+                  className="btn btn-primary w-100"
+                >
+                  Do
+                </button>
               </div>
             </div>
           </div>
-        </form>
+        </div>
       </div>
     </div>
   );
-}
+};
 
 export default App;
