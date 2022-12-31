@@ -5,8 +5,10 @@ import { useState } from "react";
 
 const App = () => {
   const [ipAddress, setIpAddress] = useState([0, 0, 0, 0]);
+  const [ipAddressBinary, setIpAddressBinary] = useState(["", "", "", ""]);
   const [slashValue, setSlashValue] = useState(24);
-  const [networkAddress, setNetworkAddress] = useState("");
+  const [networkAddress, setNetworkAddress] = useState([0, 0, 0, 0]);
+  const [subnetMask, setSubnetMask] = useState([0, 0, 0, 0]);
   const [addressClass, setAddressClass] = useState("");
   const [firstAddress, setFirstAddress] = useState("");
   const [lastAddress, setLastAddress] = useState("");
@@ -17,16 +19,68 @@ const App = () => {
 
   const handleClick = (e) => {
     e.preventDefault();
-    // console.log(ipAddress);
-    setNetworkAddress(ipAddress);
+
+    // update binary ip address
+    updateIpAddressBinary();
+    getSubnetMask();
+
+    // call all these somewhere else ???
+    setNetworkAddress(getNetworkAddress());
     setAddressClass("A");
     setFirstAddress(ipAddress);
     setLastAddress(ipAddress);
     setNextNetwork(ipAddress);
     setBroadcastAddress(ipAddress);
-    setNetworkAddress(ipAddress);
     setAvailableHosts(512);
     setNumberSubnets(256);
+  };
+
+  const getNetworkAddress = () => {
+    console.log(ipAddress);
+    console.log(slashValue);
+    let newNetworkAddress = [...ipAddress];
+    newNetworkAddress[3] = 0;
+    return newNetworkAddress;
+  };
+
+  const getSubnetMask = () => {
+    // convert int to array of length four
+    // 24 / 8 = 3 (done, first 3 set to 255, last one to 0) 255.255.255.0
+    // 26 / 8 = 3.25 (3 set to 255, 1/4 of the remaining to 1s) 255.255.255.(1100 0000)
+    // complete octets = slashValue // 8
+    // remaining bits = slashValue % 8
+    const fullOctets = Math.floor(slashValue / 8);
+    const remainingBits = slashValue % 8;
+    const partialOctet = ("1" * remainingBits) << (8 - remainingBits);
+    // console.log("partial: " + partialOctet);
+    let newSubnetMask = [];
+    for (let i = 0; i < fullOctets; i++) {
+      newSubnetMask.push(255);
+    }
+    newSubnetMask.push(partialOctet);
+    setSubnetMask(newSubnetMask);
+    console.log(newSubnetMask);
+    // console.log(fullOctets);
+    // console.log(remainingBits);
+  };
+
+  const updateIpAddressBinary = () => {
+    let binaryString = "";
+    for (let i = 0; i < ipAddress.length; i++) {
+      let decimalValue = ipAddress[i];
+      while (decimalValue > 0) {
+        if (decimalValue & 1) {
+          binaryString = "1" + binaryString;
+        } else {
+          binaryString = "0" + binaryString;
+        }
+        decimalValue = decimalValue >> 1;
+      }
+      const newIpAddressBinary = [...ipAddressBinary];
+      newIpAddressBinary[i] = binaryString;
+      setIpAddressBinary(newIpAddressBinary);
+      binaryString = "";
+    }
   };
 
   const updateIpAddress = (e, quartetIndex) => {
@@ -42,6 +96,7 @@ const App = () => {
     console.log(newSlashValue);
   };
 
+  // view
   return (
     <div className="container text-center mt-2" style={{ minWidth: "450px" }}>
       <h1>Subnet Calculator</h1>
@@ -163,7 +218,7 @@ const App = () => {
           <tbody>
             <tr className="table-primary">
               <th scope="row">NETWORK ADDRESS</th>
-              <td>{networkAddress}</td>
+              <td>{networkAddress.join(".")}</td>
             </tr>
             <tr className="table-default">
               <th scope="row">FIRST ADDRESS</th>
@@ -192,6 +247,10 @@ const App = () => {
             <tr className="table-default">
               <th scope="row">NUMBER OF SUBNETS</th>
               <td>{numberSubnets}</td>
+            </tr>
+            <tr className="table-primary">
+              <th scope="row">SUBNET MASK</th>
+              <td>{subnetMask.join(".")}</td>
             </tr>
           </tbody>
         </table>
