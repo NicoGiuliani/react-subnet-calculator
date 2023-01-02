@@ -10,19 +10,34 @@ const App = () => {
   const [networkAddress, setNetworkAddress] = useState([0, 0, 0, 0]);
   const [subnetMask, setSubnetMask] = useState([0, 0, 0, 0]);
   const [addressClass, setAddressClass] = useState("");
-  const [firstAddress, setFirstAddress] = useState("");
+  const [firstAddress, setFirstAddress] = useState([0, 0, 0, 0]);
   const [lastAddress, setLastAddress] = useState("");
-  const [broadcastAddress, setBroadcastAddress] = useState("");
-  const [nextNetwork, setNextNetwork] = useState("");
+  const [broadcastAddress, setBroadcastAddress] = useState([0, 0, 0, 0]);
+  const [nextNetwork, setNextNetwork] = useState([0, 0, 0, 0]);
   const [availableHosts, setAvailableHosts] = useState("");
   const [numberSubnets, setNumberSubnets] = useState("");
 
   const handleClick = (e) => {
     e.preventDefault();
 
-    const newSubnetMask = getSubnetMask(slashValue);
+    const newSubnetMask = getSubnetMask();
     setSubnetMask(newSubnetMask);
-    updateNetworkAddress(newSubnetMask);
+
+    const newNetworkAddress = getNetworkAddress(newSubnetMask);
+    setNetworkAddress(newNetworkAddress);
+
+    let newFirstAddress = [...newNetworkAddress];
+    newFirstAddress[3] = newFirstAddress[3] + 1;
+    setFirstAddress(newFirstAddress);
+
+    const newNextNetworkAddress = getNextNetworkAddress(
+      newNetworkAddress,
+      newSubnetMask
+    );
+    setNextNetwork(newNextNetworkAddress);
+
+    const broadcastAddress = getBroadcastAddress(newNextNetworkAddress);
+    setBroadcastAddress(broadcastAddress);
 
     // setAddressClass("A");
     // setFirstAddress(ipAddress);
@@ -33,15 +48,36 @@ const App = () => {
     // setNumberSubnets(256);
   };
 
-  const updateNetworkAddress = (subnetMask) => {
+  const getNetworkAddress = (subnetMask) => {
     let newNetworkAddress = [...ipAddress];
     for (let i = 0; i < subnetMask.length; i++) {
       newNetworkAddress[i] = newNetworkAddress[i] & subnetMask[i];
     }
-    setNetworkAddress(newNetworkAddress);
+    return newNetworkAddress;
   };
 
-  const getSubnetMask = (slashValue) => {
+  const getNextNetworkAddress = (networkAddress) => {
+    const increase = Math.pow(2, 8 - (slashValue % 8));
+    const changedQuartet = Math.ceil(slashValue / 8) - 1;
+    let newNextNetwork = [...networkAddress];
+    newNextNetwork[changedQuartet] = newNextNetwork[changedQuartet] + increase;
+    return newNextNetwork;
+  };
+
+  const getBroadcastAddress = (nextNetwork) => {
+    let broadcastAddress = [...nextNetwork];
+    for (let i = 3; i >= 0; i--) {
+      broadcastAddress[i] = broadcastAddress[i] - 1;
+      if (broadcastAddress[i] > 0) {
+        break;
+      } else {
+        broadcastAddress[i] = 0;
+      }
+    }
+    return broadcastAddress;
+  };
+
+  const getSubnetMask = () => {
     const fullOctets = Math.floor(slashValue / 8);
     const remainingBits = slashValue % 8;
     const partialOctet =
@@ -190,7 +226,7 @@ const App = () => {
             </tr>
             <tr className="table-default">
               <th scope="row">FIRST ADDRESS</th>
-              <td>{firstAddress}</td>
+              <td>{firstAddress.join(".")}</td>
             </tr>
             <tr className="table-primary">
               <th scope="row">LAST HOST ADDRESS</th>
@@ -198,11 +234,11 @@ const App = () => {
             </tr>
             <tr className="table-default">
               <th scope="row">BROADCAST ADDRESS</th>
-              <td>{broadcastAddress}</td>
+              <td>{broadcastAddress.join(".")}</td>
             </tr>
             <tr className="table-primary">
               <th scope="row">NEXT NETWORK</th>
-              <td>{nextNetwork}</td>
+              <td>{nextNetwork.join(".")}</td>
             </tr>
             <tr className="table-default">
               <th scope="row">NUMBER OF AVAILABLE HOST ADDRESSES</th>
