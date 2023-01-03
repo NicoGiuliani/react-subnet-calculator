@@ -86,7 +86,7 @@ const App = () => {
   };
 
   const getNextNetworkAddress = (networkAddress) => {
-    const increase = Math.pow(2, slashValue % 8);
+    const increase = slashValue % 8 > 0 ? Math.pow(2, 8 - (slashValue % 8)) : 1;
     const changedQuartet = Math.ceil(slashValue / 8) - 1;
     let newNextNetwork = [...networkAddress];
     newNextNetwork[changedQuartet] = newNextNetwork[changedQuartet] + increase;
