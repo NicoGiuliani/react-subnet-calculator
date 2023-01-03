@@ -9,6 +9,7 @@ const App = () => {
   const [slashValue, setSlashValue] = useState(24);
   const [networkAddress, setNetworkAddress] = useState([0, 0, 0, 0]);
   const [subnetMask, setSubnetMask] = useState([0, 0, 0, 0]);
+  const [wildcardMask, setWildcardMask] = useState([0, 0, 0, 0]);
   const [addressClass, setAddressClass] = useState("");
   const [firstAddress, setFirstAddress] = useState([0, 0, 0, 0]);
   const [lastAddress, setLastAddress] = useState([0, 0, 0, 0]);
@@ -22,6 +23,9 @@ const App = () => {
 
     const newSubnetMask = getSubnetMask();
     setSubnetMask(newSubnetMask);
+
+    const newWildcardMask = getWildcardMask(newSubnetMask);
+    setWildcardMask(newWildcardMask);
 
     const newNetworkAddress = getNetworkAddress(newSubnetMask);
     setNetworkAddress(newNetworkAddress);
@@ -105,6 +109,16 @@ const App = () => {
     newSubnetMask.push(partialOctet);
     return newSubnetMask;
   };
+
+  const getWildcardMask = (subnetMask) => {
+    console.log("subnet mask: " + subnetMask);
+    const newWildcardMask = [...subnetMask];
+    for (let i = 0; i < subnetMask.length; i++) {
+      newWildcardMask[i] = 255 - newWildcardMask[i];
+    }
+    console.log(newWildcardMask);
+    return newWildcardMask;
+  }
 
   const getAvailableHosts = () => {
     return Math.pow(2, 32 - slashValue) - 2;
@@ -287,6 +301,10 @@ const App = () => {
             <tr className="table-default">
               <th scope="row">SUBNET MASK</th>
               <td>{subnetMask.join(".")}</td>
+            </tr>
+            <tr className="table-primary">
+              <th scope="row">WILDCARD MASK</th>
+              <td>{wildcardMask.join(".")}</td>
             </tr>
           </tbody>
         </table>
