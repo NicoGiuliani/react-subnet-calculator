@@ -16,7 +16,7 @@ const App = () => {
   const [broadcastAddress, setBroadcastAddress] = useState([0, 0, 0, 0]);
   const [nextNetwork, setNextNetwork] = useState([0, 0, 0, 0]);
   const [availableHosts, setAvailableHosts] = useState(0);
-  // const [numberSubnets, setNumberSubnets] = useState(0);
+  const [numberSubnets, setNumberSubnets] = useState(0);
 
   const handleClick = (e) => {
     e.preventDefault();
@@ -48,11 +48,11 @@ const App = () => {
     const newAvailableHosts = getAvailableHosts();
     setAvailableHosts(newAvailableHosts);
 
-    // const newNumberSubnets = getNumberSubnets();
-    // setNumberSubnets(newNumberSubnets);
-
     const newAddressClass = getAddressClass();
     setAddressClass(newAddressClass);
+
+    const newNumberSubnets = getNumberSubnets(newAddressClass);
+    setNumberSubnets(newNumberSubnets);
   };
 
   const getNetworkAddress = (subnetMask) => {
@@ -76,6 +76,22 @@ const App = () => {
     return newIpAddress;
   };
 
+  const incrementOctet = (networkAddress, octetIndex, increase) => {
+    let newIpAddress = [...networkAddress];
+    let carryOver = 0;
+    for (let i = octetIndex; i >= 0; i--) {
+      newIpAddress[i] = newIpAddress[i] + increase + carryOver;
+      increase = 0;
+      if (newIpAddress[i] >= 256) {
+        carryOver = newIpAddress[i] - 255;
+        newIpAddress[i] = 0;
+      } else {
+        break;
+      }
+    }
+    return newIpAddress;
+  };
+
   const decrementIpAddress = (networkAddress) => {
     let newIpAddress = [...networkAddress];
     for (let i = 3; i >= 0; i--) {
@@ -91,9 +107,9 @@ const App = () => {
 
   const getNextNetworkAddress = (networkAddress) => {
     const increase = slashValue % 8 > 0 ? Math.pow(2, 8 - (slashValue % 8)) : 1;
-    const changedQuartet = Math.ceil(slashValue / 8) - 1;
+    const changedOctet = Math.ceil(slashValue / 8) - 1;
     let newNextNetwork = [...networkAddress];
-    newNextNetwork[changedQuartet] = newNextNetwork[changedQuartet] + increase;
+    newNextNetwork = incrementOctet(newNextNetwork, changedOctet, increase); //newNextNetwork[changedQuartet] + increase;
     return newNextNetwork;
   };
 
@@ -102,40 +118,53 @@ const App = () => {
     const remainingBits = slashValue % 8;
     const partialOctet =
       ("0b" + "1".repeat(remainingBits)) << (8 - remainingBits);
-    let newSubnetMask = [];
-    for (let i = 0; i < fullOctets; i++) {
-      newSubnetMask.push(255);
+    let newSubnetMask = [0, 0, 0, 0];
+    let i = 0;
+    while (i < fullOctets) {
+      newSubnetMask[i] = 255;
+      i++;
     }
-    newSubnetMask.push(partialOctet);
+    newSubnetMask[i] = partialOctet;
     return newSubnetMask;
   };
 
   const getWildcardMask = (subnetMask) => {
-    console.log("subnet mask: " + subnetMask);
     const newWildcardMask = [...subnetMask];
     for (let i = 0; i < subnetMask.length; i++) {
       newWildcardMask[i] = 255 - newWildcardMask[i];
     }
-    console.log(newWildcardMask);
     return newWildcardMask;
-  }
+  };
 
   const getAvailableHosts = () => {
     return Math.pow(2, 32 - slashValue) - 2;
   };
 
-  // const getNumberSubnets = () => {
-  //   return Math.pow(2, slashValue);
-  // };
+  const getNumberSubnets = (addressClass) => {
+    const classMap = {
+      A: 8,
+      B: 16,
+      C: 24,
+      D: 0,
+      E: 0,
+    };
+
+    if (slashValue <= classMap[addressClass]) {
+      return 0;
+    }
+
+    const exp = slashValue - classMap[addressClass];
+    return Math.pow(2, exp);
+  };
 
   const getAddressClass = () => {
     const classes = ["B", "C", "D", "E"];
-    const classIds = [128, 192, 224, 240]
+    const classIds = [128, 192, 224, 240];
     const andResult = ipAddress[0] & 240;
     if (classIds.includes(andResult)) {
       return classes[classIds.indexOf(andResult)];
     } else {
-      return "A"
+      return "A";
     }
   };
 
@@ -151,7 +180,10 @@ const App = () => {
   };
 
   return (
-    <div className="container text-center mt-3 border border-dark rounded" style={{ minWidth: "450px" }}>
+    <div
+      className="container text-center mt-3 border border-dark rounded"
+      style={{ minWidth: "450px" }}
+    >
       <h1 className="my-3">Subnet Calculator</h1>
       <div className="row">
         <div className="col-8 d-flex justify-content-around">
@@ -294,10 +326,6 @@ const App = () => {
               <th scope="row">CLASS</th>
               <td>{addressClass}</td>
             </tr>
-            {/* <tr className="table-default">
-              <th scope="row">NUMBER OF SUBNETS</th>
-              <td>{numberSubnets}</td>
-            </tr> */}
             <tr className="table-default">
               <th scope="row">SUBNET MASK</th>
               <td>{subnetMask.join(".")}</td>
@@ -305,6 +333,10 @@ const App = () => {
             <tr className="table-primary">
               <th scope="row">WILDCARD MASK</th>
               <td>{wildcardMask.join(".")}</td>
+            </tr>
+            <tr className="table-default">
+              <th scope="row">NUMBER OF SUBNETS</th>
+              <td>{numberSubnets}</td>
             </tr>
           </tbody>
         </table>
