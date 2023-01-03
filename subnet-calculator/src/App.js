@@ -5,7 +5,7 @@ import { useState } from "react";
 
 const App = () => {
   const [ipAddress, setIpAddress] = useState([0, 0, 0, 0]);
-  const [ipAddressBinary, setIpAddressBinary] = useState(["", "", "", ""]);
+  // const [ipAddressBinary, setIpAddressBinary] = useState(["", "", "", ""]);
   const [slashValue, setSlashValue] = useState(24);
   const [networkAddress, setNetworkAddress] = useState([0, 0, 0, 0]);
   const [subnetMask, setSubnetMask] = useState([0, 0, 0, 0]);
@@ -15,7 +15,7 @@ const App = () => {
   const [broadcastAddress, setBroadcastAddress] = useState([0, 0, 0, 0]);
   const [nextNetwork, setNextNetwork] = useState([0, 0, 0, 0]);
   const [availableHosts, setAvailableHosts] = useState(0);
-  const [numberSubnets, setNumberSubnets] = useState(0);
+  // const [numberSubnets, setNumberSubnets] = useState(0);
 
   const handleClick = (e) => {
     e.preventDefault();
@@ -44,8 +44,8 @@ const App = () => {
     const newAvailableHosts = getAvailableHosts();
     setAvailableHosts(newAvailableHosts);
 
-    const newNumberSubnets = getNumberSubnets();
-    setNumberSubnets(newNumberSubnets);
+    // const newNumberSubnets = getNumberSubnets();
+    // setNumberSubnets(newNumberSubnets);
 
     const newAddressClass = getAddressClass();
     setAddressClass(newAddressClass);
@@ -110,15 +110,15 @@ const App = () => {
     return Math.pow(2, 32 - slashValue) - 2;
   };
 
-  const getNumberSubnets = () => {
-    return Math.pow(2, slashValue);
-  };
+  // const getNumberSubnets = () => {
+  //   return Math.pow(2, slashValue);
+  // };
 
   const getAddressClass = () => {
     const classes = ["A", "B", "C", "D", "E"];
-    const firstOctet = ipAddress[0];
-    const index = firstOctet.toString(2).indexOf("0");
-    return classes[index];
+    const classIds = [0, 128, 192, 224, 240]
+    const andResult = ipAddress[0] & 240;
+    return classes[classIds.indexOf(andResult)]
   };
 
   const updateIpAddress = (e, quartetIndex) => {
@@ -133,8 +133,8 @@ const App = () => {
   };
 
   return (
-    <div className="container text-center mt-2" style={{ minWidth: "450px" }}>
-      <h1>Subnet Calculator</h1>
+    <div className="container text-center mt-3 border border-dark rounded" style={{ minWidth: "450px" }}>
+      <h1 className="my-3">Subnet Calculator</h1>
       <div className="row">
         <div className="col-8 d-flex justify-content-around">
           <div
@@ -193,43 +193,40 @@ const App = () => {
               className="form-select w-100"
               id="exampleSelect1"
               onChange={(e) => updateSlashValue(e)}
+              defaultValue="/24"
             >
+              <option>/1</option>
+              <option>/2</option>
+              <option>/3</option>
+              <option>/4</option>
+              <option>/5</option>
+              <option>/6</option>
+              <option>/7</option>
+              <option>/8</option>
+              <option>/9</option>
+              <option>/10</option>
+              <option>/11</option>
+              <option>/12</option>
+              <option>/13</option>
+              <option>/14</option>
+              <option>/15</option>
+              <option>/16</option>
+              <option>/17</option>
+              <option>/18</option>
+              <option>/19</option>
+              <option>/20</option>
+              <option>/21</option>
+              <option>/22</option>
+              <option>/23</option>
               <option>/24</option>
               <option>/25</option>
               <option>/26</option>
               <option>/27</option>
               <option>/28</option>
-              <option>/28</option>
-              <option>/24</option>
-              <option>/25</option>
-              <option>/26</option>
-              <option>/27</option>
-              <option>/28</option>
-              <option>/28</option>
-              <option>/24</option>
-              <option>/25</option>
-              <option>/26</option>
-              <option>/27</option>
-              <option>/28</option>
-              <option>/28</option>
-              <option>/24</option>
-              <option>/25</option>
-              <option>/26</option>
-              <option>/27</option>
-              <option>/28</option>
-              <option>/28</option>
-              <option>/24</option>
-              <option>/25</option>
-              <option>/26</option>
-              <option>/27</option>
-              <option>/28</option>
-              <option>/28</option>
-              <option>/24</option>
-              <option>/25</option>
-              <option>/26</option>
-              <option>/27</option>
-              <option>/28</option>
-              <option>/28</option>
+              <option>/29</option>
+              <option>/30</option>
+              <option>/31</option>
+              <option>/32</option>
             </select>
           </div>
         </div>
@@ -238,7 +235,7 @@ const App = () => {
             onClick={(e) => handleClick(e)}
             className="btn btn-primary w-100"
           >
-            Do
+            Go
           </button>
         </div>
       </div>
@@ -272,18 +269,18 @@ const App = () => {
               <td>{nextNetwork.join(".")}</td>
             </tr>
             <tr className="table-default">
-              <th scope="row">NUMBER OF AVAILABLE HOST ADDRESSES</th>
+              <th scope="row">AVAILABLE HOST ADDRESSES</th>
               <td>{availableHosts}</td>
             </tr>
             <tr className="table-primary">
               <th scope="row">CLASS</th>
               <td>{addressClass}</td>
             </tr>
-            <tr className="table-default">
+            {/* <tr className="table-default">
               <th scope="row">NUMBER OF SUBNETS</th>
               <td>{numberSubnets}</td>
-            </tr>
-            <tr className="table-primary">
+            </tr> */}
+            <tr className="table-default">
               <th scope="row">SUBNET MASK</th>
               <td>{subnetMask.join(".")}</td>
             </tr>
