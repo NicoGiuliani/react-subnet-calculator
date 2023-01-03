@@ -1,11 +1,9 @@
-// import logo from "./logo.svg";
 import "./bootstrap.min.css";
 import "./App.css";
 import { useState } from "react";
 
 const App = () => {
   const [ipAddress, setIpAddress] = useState([0, 0, 0, 0]);
-  // const [ipAddressBinary, setIpAddressBinary] = useState(["", "", "", ""]);
   const [slashValue, setSlashValue] = useState(24);
   const [networkAddress, setNetworkAddress] = useState([0, 0, 0, 0]);
   const [subnetMask, setSubnetMask] = useState([0, 0, 0, 0]);
@@ -320,7 +318,7 @@ const App = () => {
             </tr>
             <tr className="table-default">
               <th scope="row">AVAILABLE HOST ADDRESSES</th>
-              <td>{availableHosts}</td>
+              <td>{availableHosts.toLocaleString("en-US")}</td>
             </tr>
             <tr className="table-primary">
               <th scope="row">CLASS</th>
@@ -336,7 +334,7 @@ const App = () => {
             </tr>
             <tr className="table-default">
               <th scope="row">NUMBER OF SUBNETS</th>
-              <td>{numberSubnets}</td>
+              <td>{numberSubnets.toLocaleString("en-US")}</td>
             </tr>
           </tbody>
         </table>
