@@ -115,10 +115,14 @@ const App = () => {
   // };
 
   const getAddressClass = () => {
-    const classes = ["A", "B", "C", "D", "E"];
-    const classIds = [0, 128, 192, 224, 240]
+    const classes = ["B", "C", "D", "E"];
+    const classIds = [128, 192, 224, 240]
     const andResult = ipAddress[0] & 240;
-    return classes[classIds.indexOf(andResult)]
+    if (classIds.includes(andResult)) {
+      return classes[classIds.indexOf(andResult)];
+    } else {
+      return "A"
+    }
   };
 
   const updateIpAddress = (e, quartetIndex) => {
