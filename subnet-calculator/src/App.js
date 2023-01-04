@@ -156,14 +156,14 @@ const App = () => {
   };
 
   const getAddressClass = () => {
-    const classes = ["B", "C", "D", "E"];
-    const classIds = [128, 192, 224, 240];
-    const andResult = ipAddress[0] & 240;
-    if (classIds.includes(andResult)) {
-      return classes[classIds.indexOf(andResult)];
-    } else {
-      return "A";
+    const classes = ["A", "B", "C", "D", "E"];
+    const classIds = [0, 128, 192, 224, 240];
+    for (let i = 0; i < classIds.length; i++) {
+      if ((ipAddress[0] & classIds[i]) !== classIds[i]) {
+        return classes[i - 1];
+      }
     }
+    return 'E';
   };
 
   const updateIpAddress = (e, quartetIndex) => {
