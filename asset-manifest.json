@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/react-subnet-calculator/static/css/main.98c561e4.css",
-    "main.js": "/react-subnet-calculator/static/js/main.ac58c029.js",
+    "main.js": "/react-subnet-calculator/static/js/main.096485dc.js",
     "static/js/787.27f229a1.chunk.js": "/react-subnet-calculator/static/js/787.27f229a1.chunk.js",
     "index.html": "/react-subnet-calculator/index.html",
     "main.98c561e4.css.map": "/react-subnet-calculator/static/css/main.98c561e4.css.map",
-    "main.ac58c029.js.map": "/react-subnet-calculator/static/js/main.ac58c029.js.map",
+    "main.096485dc.js.map": "/react-subnet-calculator/static/js/main.096485dc.js.map",
     "787.27f229a1.chunk.js.map": "/react-subnet-calculator/static/js/787.27f229a1.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.98c561e4.css",
-    "static/js/main.ac58c029.js"
+    "static/js/main.096485dc.js"
   ]
 }
